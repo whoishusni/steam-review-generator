@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steam Review Generator - Template & Scoring System</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+        
+        :root {
+            --steam-blue: #1b2838;
+            --steam-dark: #171a21;
+            --steam-light: #66c0f4;
+            --steam-accent: #c7d5e0;
+            --success: #a4d007;
+            --warning: #e1b32e;
+            --danger: #d94126;
+            --info: #2f89bc;
+            --bg-gradient: linear-gradient(135deg, #1b2838 0%, #0f1922 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--steam-accent);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(23, 26, 33, 0.8);
+            border-bottom: 2px solid var(--steam-light);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 192, 244, 0.1), transparent);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        h1 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--steam-light);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(102, 192, 244, 0.5);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            font-weight: 300;
+        }
+        
+        .game-input-section {
+            background: rgba(27, 40, 56, 0.6);
+            border: 1px solid rgba(102, 192, 244, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--steam-light);
+            font-size: 0.95rem;
+        }
+        
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(23, 26, 33, 0.8);
+            border: 1px solid rgba(102, 192, 244, 0.3);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--steam-light);
+            box-shadow: 0 0 10px rgba(102, 192, 244, 0.3);
+        }
+        
+        .category-section {
+            background: rgba(27, 40, 56, 0.6);
+            border: 1px solid rgba(102, 192, 244, 0.2);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .category-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(102, 192, 244, 0.4);
+        }
+        
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(102, 192, 244, 0.2);
+        }
+        
+        .category-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--steam-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .weight-badge {
+            background: rgba(102, 192, 244, 0.2);
+            color: var(--steam-light);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid rgba(102, 192, 244, 0.3);
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+        }
+        
+        .option-card {
+            background: rgba(23, 26, 33, 0.6);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: transparent;
+            transition: background 0.3s ease;
+        }
+        
+        .option-card:hover {
+            background: rgba(102, 192, 244, 0.1);
+            border-color: rgba(102, 192, 244, 0.3);
+            transform: translateX(5px);
+        }
+        
+        .option-card.selected {
+            background: rgba(102, 192, 244, 0.15);
+            border-color: var(--steam-light);
+        }
+        
+        .option-card.selected::before {
+            background: var(--steam-light);
+        }
+        
+        .option-score {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--steam-accent);
+            opacity: 0.7;
+        }
+        
+        .option-text {
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding-right: 30px;
+        }
+        
+        .option-desc {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            margin-top: 5px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(23, 26, 33, 0.8);
+            border-radius: 3px;
+            margin-top: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--steam-light), #4a9fcf);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(102, 192, 244, 0.5);
+        }
+        
+        .score-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .generate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--steam-light) 0%, #4a9fcf 100%);
+            border: none;
+            border-radius: 8px;
+            color: var(--steam-dark);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 192, 244, 0.4);
+        }
+        
+        .generate-btn:active {
+            transform: translateY(0);
+        }
+        
+        .result-section {
+            display: none;
+            margin-top: 40px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .verdict-card {
+            background: linear-gradient(135deg, rgba(23, 26, 33, 0.95) 0%, rgba(27, 40, 56, 0.95) 100%);
+            border: 2px solid var(--steam-light);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .verdict-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 192, 244, 0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .final-score {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--steam-light);
+            text-shadow: 0 0 30px rgba(102, 192, 244, 0.6);
+            margin: 20px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .verdict-text {
+            font-size: 2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .verdict-recommend {
+            color: var(--success);
+            text-shadow: 0 0 20px rgba(164, 208, 7, 0.5);
+        }
+        
+        .verdict-mixed {
+            color: var(--warning);
+            text-shadow: 0 0 20px rgba(225, 179, 46, 0.5);
+        }
+        
+        .verdict-not-recommend {
+            color: var(--danger);
+            text-shadow: 0 0 20px rgba(217, 65, 38, 0.5);
+        }
+        
+        .score-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .breakdown-item {
+            background: rgba(23, 26, 33, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(102, 192, 244, 0.2);
+        }
+        
+        .breakdown-label {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+        
+        .breakdown-score {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--steam-light);
+        }
+        
+        .review-output {
+            background: rgba(23, 26, 33, 0.8);
+            border: 1px solid rgba(102, 192, 244, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(102, 192, 244, 0.2);
+        }
+        
+        .review-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            color: var(--steam-light);
+        }
+        
+        .copy-btn {
+            background: rgba(102, 192, 244, 0.2);
+            border: 1px solid var(--steam-light);
+            color: var(--steam-light);
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .copy-btn:hover {
+            background: var(--steam-light);
+            color: var(--steam-dark);
+        }
+        
+        .review-content {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: #c7d5e0;
+            border: 1px solid rgba(102, 192, 244, 0.1);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .recommendation-toggle {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .toggle-btn {
+            flex: 1;
+            padding: 15px;
+            background: rgba(23, 26, 33, 0.8);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            color: var(--steam-accent);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .toggle-btn.positive {
+            border-color: rgba(164, 208, 7, 0.3);
+        }
+        
+        .toggle-btn.positive:hover,
+        .toggle-btn.positive.active {
+            background: rgba(164, 208, 7, 0.2);
+            border-color: var(--success);
+            color: var(--success);
+        }
+        
+        .toggle-btn.negative {
+            border-color: rgba(217, 65, 38, 0.3);
+        }
+        
+        .toggle-btn.negative:hover,
+        .toggle-btn.negative.active {
+            background: rgba(217, 65, 38, 0.2);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px 25px;
+            background: rgba(27, 40, 56, 0.6);
+            border-radius: 10px;
+            border: 1px solid rgba(102, 192, 244, 0.2);
+            min-width: 120px;
+        }
+        
+        .stat-value {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--steam-light);
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .final-score { font-size: 3.5rem; }
+            .options-grid { grid-template-columns: 1fr; }
+            .verdict-text { font-size: 1.5rem; }
+        }
+        
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(102, 192, 244, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--steam-light);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🎮 Steam Review Generator</h1>
+        <p class="subtitle">Buat review Steam yang terstruktur dengan sistem scoring otomatis</p>
+    </header>
+    
+    <div class="container">
+        <!-- Input Game Name -->
+        <div class="game-input-section">
+            <div class="input-group">
+                <label for="gameName">Nama Game</label>
+                <input type="text" id="gameName" placeholder="Masukkan nama game yang akan direview...">
+            </div>
+            <div class="input-group">
+                <label for="playTime">Jam Bermain</label>
+                <select id="playTime">
+                    <option value="< 1 jam">< 1 jam</option>
+                    <option value="1-5 jam">1-5 jam</option>
+                    <option value="5-10 jam" selected>5-10 jam</option>
+                    <option value="10-50 jam">10-50 jam</option>
+                    <option value="50-100 jam">50-100 jam</option>
+                    <option value="100+ jam">100+ jam</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Graphics Category -->
+        <div class="category-section" data-category="graphics" data-weight="20">
+            <div class="category-header">
+                <div class="category-title">🎨 Graphics / Visual</div>
+                <span class="weight-badge">Bobot: 20%</span>
+            </div>
+            <div class="options-grid">
+                <div class="option-card" data-score="10">
+                    <span class="option-score">10 pts</span>
+                    <div class="option-text">You forget what reality is</div>
+                    <div class="option-desc">Grafik fotorealistik yang memukau</div>
+                </div>
+                <div class="option-card" data-score="8">
+                    <span class="option-score">8 pts</span>
+                    <div class="option-text">Beautiful</div>
+                    <div class="option-desc">Sangat indah dan estetis</div>
+                </div>
+                <div class="option-card" data-score="6">
+                    <span class="option-score">6 pts</span>
+                    <div class="option-text">Good</div>
+                    <div class="option-desc">Grafik yang solid dan menyenangkan</div>
+                </div>
+                <div class="option-card" data-score="4">
+                    <span class="option-score">4 pts</span>
+                    <div class="option-text">Decent</div>
+                    <div class="option-desc">Cukup baik, tidak mengganggu</div>
+                </div>
+                <div class="option-card" data-score="2">
+                    <span class="option-score">2 pts</span>
+                    <div class="option-text">Bad</div>
+                    <div class="option-desc">Kurang memuaskan visually</div>
+                </div>
+                <div class="option-card" data-score="0">
+                    <span class="option-score">0 pts</span>
+                    <div class="option-text">MS-DOS</div>
+                    <div class="option-desc">Grafik sangat outdated</div>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div class="score-display">
+                <span>Skor Graphics</span>
+                <span class="category-score">-/10</span>
+            </div>
+        </div>
+
+        <!-- Gameplay Category -->
+        <div class="category-section" data-category="gameplay" data-weight="25">
+            <div class="category-header">
+                <div class="category-title">🎯 Gameplay</div>
+                <span class="weight-badge">Bobot: 25%</span>
+            </div>
+            <div class="options-grid">
+                <div class="option-card" data-score="10">
+                    <span class="option-score">10 pts</span>
+                    <div class="option-text">Very Good</div>
+                    <div class="option-desc">Gameplay yang sangat memuaskan dan adiktif</div>
+                </div>
+                <div class="option-card" data-score="8">
+                    <span class="option-score">8 pts</span>
+                    <div class="option-text">Good</div>
+                    <div class="option-desc">Mekanik game yang solid</div>
+                </div>
+                <div class="option-card" data-score="6">
+                    <span class="option-score">6 pts</span>
+                    <div class="option-text">It's just gameplay</div>
+                    <div class="option-desc">Standar, tidak istimewa</div>
+                </div>
+                <div class="option-card" data-score="4">
+                    <span class="option-score">4 pts</span>
+                    <div class="option-text">Mehh</div>
+                    <div class="option-desc">Kurang engaging</div>
+                </div>
+                <div class="option-card" data-score="2">
+                    <span class="option-score">2 pts</span>
+                    <div class="option-text">Watch paint dry</div>
+                    <div class="option-desc">Sangat membosankan</div>
+                </div>
+                <div class="option-card" data-score="0">
+                    <span class="option-score">0 pts</span>
+                    <div class="option-text">Just don't</div>
+                    <div class="option-desc">Gameplay yang buruk</div>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div class="score-display">
+                <span>Skor Gameplay</span>
+                <span class="category-score">-/10</span>
+            </div>
+        </div>
+
+        <!-- Audio Category -->
+        <div class="category-section" data-category="audio" data-weight="15">
+            <div class="category-header">
+                <div class="category-title">🎵 Audio / Musik</div>
+                <span class="weight-badge">Bobot: 15%</span>
+            </div>
+            <div class="options-grid">
+                <div class="option-card" data-score="10">
+                    <span class="option-score">10 pts</span>
+                    <div class="option-text">Eargasm</div>
+                    <div class="option-desc">Soundtrack dan audio sempurna</div>
+                </div>
+                <div class="option-card" data-score="8">
+                    <span class="option-score">8 pts</span>
+                    <div class="option-text">Very good</div>
+                    <div class="option-desc">Audio berkualitas tinggi</div>
+                </div>
+                <div class="option-card" data-score="6">
+                    <span class="option-score">6 pts</span>
+                    <div class="option-text">Good</div>
+                    <div class="option-desc">Audio yang menyenangkan</div>
+                </div>
+                <div class="option-card" data-score="4">
+                    <span class="option-score">4 pts</span>
+                    <div class="option-text">Not too bad</div>
+                    <div class="option-desc">Cukup baik</div>
+                </div>
+                <div class="option-card" data-score="2">
+                    <span class="option-score">2 pts</span>
+                    <div class="option-text">Bad</div>
+                    <div class="option-desc">Kualitas audio rendah</div>
+                </div>
+                <div class="option-card" data-score="0">
+                    <span class="option-score">0 pts</span>
+                    <div class="option-text">I'm now deaf</div>
+                    <div class="option-desc">Audio yang sangat buruk</div>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div class="score-display">
+                <span>Skor Audio</span>
+                <span class="category-score">-/10</span>
+            </div>
+        </div>
+
+        <!-- Story Category -->
+        <div class="category-section" data-category="story" data-weight="20">
+            <div class="category-header">
+                <div class="category-title">📖 Story / Narasi</div>
+                <span class="weight-badge">Bobot: 20%</span>
+            </div>
+            <div class="options-grid">
+                <div class="option-card" data-score="10">
+                    <span class="option-score">10 pts</span>
+                    <div class="option-text">It'll replace your life</div>
+                    <div class="option-desc">Cerita yang sangat mendalam dan emosional</div>
+                </div>
+                <div class="option-card" data-score="8">
+                    <span class="option-score">8 pts</span>
+                    <div class="option-text">Lovely</div>
+                    <div class="option-desc">Cerita yang sangat baik dan memorable</div>
+                </div>
+                <div class="option-card" data-score="6">
+                    <span class="option-score">6 pts</span>
+                    <div class="option-text">Good</div>
+                    <div class="option-desc">Narasi yang solid</div>
+                </div>
+                <div class="option-card" data-score="4">
+                    <span class="option-score">4 pts</span>
+                    <div class="option-text">Average</div>
+                    <div class="option-desc">Cerita standar</div>
+                </div>
+                <div class="option-card" data-score="2">
+                    <span class="option-score">2 pts</span>
+                    <div class="option-text">Some lore</div>
+                    <div class="option-desc">Sedikit lore/background</div>
+                </div>
+                <div class="option-card" data-score="0">
+                    <span class="option-score">0 pts</span>
+                    <div class="option-text">No Story</div>
+                    <div class="option-desc">Tidak ada cerita sama sekali</div>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div class="score-display">
+                <span>Skor Story</span>
+                <span class="category-score">-/10</span>
+            </div>
+        </div>
+
+        <!-- Technical Category -->
+        <div class="category-section" data-category="technical" data-weight="10">
+            <div class="category-header">
+                <div class="category-title">⚙️ Technical / PC Requirements</div>
+                <span class="weight-badge">Bobot: 10%</span>
+            </div>
+            <div class="options-grid">
+                <div class="option-card" data-score="10">
+                    <span class="option-score">10 pts</span>
+                    <div class="option-text">Check if you can run paint</div>
+                    <div class="option-desc">Berjalan di PC mana pun</div>
+                </div>
+                <div class="option-card" data-score="8">
+                    <span class="option-score">8 pts</span>
+                    <div class="option-text">Potato</div>
+                    <div class="option-desc">Ringan, PC low-end bisa</div>
+                </div>
+                <div class="option-card" data-score="6">
+                    <span class="option-score">6 pts</span>
+                    <div class="option-text">Decent</div>
+                    <div class="option-desc">Spesifikasi menengah</div>
+                </div>
+                <div class="option-card" data-score="4">
+                    <span class="option-score">4 pts</span>
+                    <div class="option-text">Fast</div>
+                    <div class="option-desc">Butuh PC yang cukup kencang</div>
+                </div>
+                <div class="option-card" data-score="2">
+                    <span class="option-score">2 pts</span>
+                    <div class="option-text">Rich boi</div>
+                    <div class="option-desc">Butuh PC high-end</div>
+                </div>
+                <div class="option-card" data-score="0">
+                    <span class="option-score">0 pts</span>
+                    <div class="option-text">Ask NASA</div>
+                    <div class="option-desc">Sangat berat, unplayable</div>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div class="score-display">
+                <span>Skor Technical</span>
+                <span class="category-score">-/10</span>
+            </div>
+        </div>
+
+        <!-- Price Value Category -->
+        <div class="category-section" data-category="price" data-weight="10">
+            <div class="category-header">
+                <div class="category-title">💰 Price / Value</div>
+                <span class="weight-badge">Bobot: 10%</span>
+            </div>
+            <div class="options-grid">
+                <div class="option-card" data-score="10">
+                    <span class="option-score">10 pts</span>
+                    <div class="option-text">It's free!</div>
+                    <div class="option-desc">Gratis to play</div>
+                </div>
+                <div class="option-card" data-score="8">
+                    <span class="option-score">8 pts</span>
+                    <div class="option-text">Worth the price</div>
+                    <div class="option-desc">Value for money</div>
+                </div>
+                <div class="option-card" data-score="6">
+                    <span class="option-score">6 pts</span>
+                    <div class="option-text">If it's on sale</div>
+                    <div class="option-desc">Bagus saat diskon</div>
+                </div>
+                <div class="option-card" data-score="4">
+                    <span class="option-score">4 pts</span>
+                    <div class="option-text">Spare money left</div>
+                    <div class="option-desc">Kalau ada uang lebih</div>
+                </div>
+                <div class="option-card" data-score="2">
+                    <span class="option-score">2 pts</span>
+                    <div class="option-text">Not recommended</div>
+                    <div class="option-desc">Terlalu mahal untuk isinya</div>
+                </div>
+                <div class="option-card" data-score="0">
+                    <span class="option-score">0 pts</span>
+                    <div class="option-text">Burn your money</div>
+                    <div class="option-desc">Sangat tidak worth it</div>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div class="score-display">
+                <span>Skor Value</span>
+                <span class="category-score">-/10</span>
+            </div>
+        </div>
+
+        <!-- Recommendation Toggle -->
+        <div class="category-section">
+            <div class="category-header">
+                <div class="category-title">👍 Rekomendasi Akhir</div>
+            </div>
+            <div class="recommendation-toggle">
+                <button class="toggle-btn positive" onclick="setRecommendation(true)">
+                    <span class="emoji">👍</span> Recommended
+                </button>
+                <button class="toggle-btn negative" onclick="setRecommendation(false)">
+                    <span class="emoji">👎</span> Not Recommended
+                </button>
+            </div>
+        </div>
+
+        <button class="generate-btn" onclick="generateReview()">
+            Generate Review & Hitung Skor
+        </button>
+
+        <!-- Results Section -->
+        <div class="result-section" id="resultSection">
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalScore">0</div>
+                    <div class="stat-label">Total Skor</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="weightedScore">0</div>
+                    <div class="stat-label">Bobot Skor</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="categoryCount">0</div>
+                    <div class="stat-label">Kategori Dinilai</div>
+                </div>
+            </div>
+
+            <div class="verdict-card" id="verdictCard">
+                <div class="verdict-text" id="verdictText">MENUNGGU VERDICT</div>
+                <div class="final-score" id="finalScoreDisplay">0/100</div>
+                <p id="verdictDescription" style="opacity: 0.8; margin-bottom: 20px;"></p>
+                
+                <div class="score-breakdown" id="scoreBreakdown">
+                    <!-- Breakdown items will be inserted here -->
+                </div>
+            </div>
+
+            <div class="review-output">
+                <div class="review-header">
+                    <div class="review-title">📋 Generated Steam Review</div>
+                    <button class="copy-btn" onclick="copyReview()">
+                        <span>📋</span> Copy to Clipboard
+                    </button>
+                </div>
+                <div class="review-content" id="reviewContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        const scores = {
+            graphics: null,
+            gameplay: null,
+            audio: null,
+            story: null,
+            technical: null,
+            price: null
+        };
+        
+        const weights = {
+            graphics: 20,
+            gameplay: 25,
+            audio: 15,
+            story: 20,
+            technical: 10,
+            price: 10
+        };
+        
+        let userRecommendation = null;
+        let selectedOptions = {};
+
+        // Option card selection
+        document.querySelectorAll('.option-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const section = this.closest('.category-section');
+                const category = section.dataset.category;
+                const score = parseInt(this.dataset.score);
+                
+                // Remove selected class from siblings
+                section.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+                
+                // Add selected class to clicked
+                this.classList.add('selected');
+                
+                // Update score
+                scores[category] = score;
+                selectedOptions[category] = this.querySelector('.option-text').textContent;
+                
+                // Update UI
+                updateCategoryUI(section, score);
+            });
+        });
+        
+        function updateCategoryUI(section, score) {
+            const progressBar = section.querySelector('.progress-fill');
+            const scoreDisplay = section.querySelector('.category-score');
+            
+            progressBar.style.width = (score * 10) + '%';
+            scoreDisplay.textContent = score + '/10';
+            
+            // Color coding
+            if (score >= 8) {
+                progressBar.style.background = 'linear-gradient(90deg, #a4d007, #8ab005)';
+            } else if (score >= 5) {
+                progressBar.style.background = 'linear-gradient(90deg, #e1b32e, #c99d25)';
+            } else {
+                progressBar.style.background = 'linear-gradient(90deg, #d94126, #b8351f)';
+            }
+        }
+        
+        function setRecommendation(isPositive) {
+            userRecommendation = isPositive;
+            document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+            
+            if (isPositive) {
+                document.querySelector('.toggle-btn.positive').classList.add('active');
+            } else {
+                document.querySelector('.toggle-btn.negative').classList.add('active');
+            }
+        }
+        
+        function calculateWeightedScore() {
+            let totalWeightedScore = 0;
+            let totalWeight = 0;
+            let categoryCount = 0;
+            
+            for (let category in scores) {
+                if (scores[category] !== null) {
+                    totalWeightedScore += (scores[category] * weights[category]);
+                    totalWeight += weights[category];
+                    categoryCount++;
+                }
+            }
+            
+            // Normalize to 100
+            const finalScore = totalWeight > 0 ? Math.round((totalWeightedScore / totalWeight) * 10) : 0;
+            
+            return {
+                final: finalScore,
+                raw: totalWeightedScore,
+                count: categoryCount,
+                details: scores
+            };
+        }
+        
+        function getVerdict(score, recommendation) {
+            if (recommendation === null) {
+                return {
+                    text: "BELUM MEMILIH",
+                    class: "",
+                    desc: "Silakan pilih rekomendasi (Recommended/Not Recommended)"
+                };
+            }
+            
+            if (score >= 85) {
+                return {
+                    text: recommendation ? "MASTERPIECE - MUST PLAY" : "CONTROVERSIAL MASTERPIECE",
+                    class: "verdict-recommend",
+                    desc: recommendation ? "Game yang luar biasa, wajib dimainkan semua gamer!" : "Game berkualitas tinggi tapi mungkin tidak untuk semua orang"
+                };
+            } else if (score >= 70) {
+                return {
+                    text: recommendation ? "HIGHLY RECOMMENDED" : "GOOD BUT NOT FOR EVERYONE",
+                    class: recommendation ? "verdict-recommend" : "verdict-mixed",
+                    desc: recommendation ? "Game yang sangat baik dengan sedikit kekurangan" : "Game bagus tapi ada dealbreaker tertentu"
+                };
+            } else if (score >= 55) {
+                return {
+                    text: recommendation ? "WORTH PLAYING" : "MIXED FEELINGS",
+                    class: recommendation ? "verdict-recommend" : "verdict-mixed",
+                    desc: recommendation ? "Game yang solid untuk fans genre ini" : "Ada potensi tapi banyak masalah"
+                };
+            } else if (score >= 40) {
+                return {
+                    text: recommendation ? "AVERAGE - WAIT FOR SALE" : "NOT RECOMMENDED",
+                    class: recommendation ? "verdict-mixed" : "verdict-not-recommend",
+                    desc: recommendation ? "Cukup baik kalau suka genre ini, tunggu diskon" : "Kurang memuaskan, lebih baik cari alternatif"
+                };
+            } else if (score >= 25) {
+                return {
+                    text: recommendation ? "WEAK BUT HAS POTENTIAL" : "AVOID AT ALL COSTS",
+                    class: recommendation ? "verdict-mixed" : "verdict-not-recommend",
+                    desc: recommendation ? "Butuh banyak patch/update untuk jadi layak" : "Game yang sangat buruk, jangan dibeli"
+                };
+            } else {
+                return {
+                    text: "UNPLAYABLE / BROKEN",
+                    class: "verdict-not-recommend",
+                    desc: "Game dalam kondisi yang sangat buruk"
+                };
+            }
+        }
+        
+        function generateReview() {
+            const gameName = document.getElementById('gameName').value || 'Unknown Game';
+            const playTime = document.getElementById('playTime').value;
+            
+            // Check if all categories are filled
+            const filledCategories = Object.values(scores).filter(s => s !== null).length;
+            
+            if (filledCategories < 6) {
+                alert('Silakan isi semua kategori penilaian terlebih dahulu!');
+                return;
+            }
+            
+            if (userRecommendation === null) {
+                alert('Silakan pilih rekomendasi (Recommended atau Not Recommended)!');
+                return;
+            }
+            
+            const calculation = calculateWeightedScore();
+            const verdict = getVerdict(calculation.final, userRecommendation);
+            
+            // Update UI
+            document.getElementById('resultSection').style.display = 'block';
+            document.getElementById('totalScore').textContent = Object.values(scores).reduce((a,b) => a+b, 0);
+            document.getElementById('weightedScore').textContent = calculation.final;
+            document.getElementById('categoryCount').textContent = calculation.count;
+            
+            document.getElementById('finalScoreDisplay').textContent = calculation.final + '/100';
+            document.getElementById('verdictText').textContent = verdict.text;
+            document.getElementById('verdictText').className = 'verdict-text ' + verdict.class;
+            document.getElementById('verdictDescription').textContent = verdict.desc;
+            
+            // Generate breakdown
+            const breakdownHTML = Object.keys(scores).map(cat => {
+                const catName = cat.charAt(0).toUpperCase() + cat.slice(1);
+                const weighted = Math.round((scores[cat] * weights[cat]) / 10);
+                return `
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">${catName} (${weights[cat]}%)</div>
+                        <div class="breakdown-score">${scores[cat]}/10 → ${weighted}pts</div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('scoreBreakdown').innerHTML = breakdownHTML;
+            
+            // Generate review text
+            const reviewText = generateReviewText(gameName, playTime, calculation.final);
+            document.getElementById('reviewContent').textContent = reviewText;
+            
+            // Scroll to result
+            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function generateReviewText(gameName, playTime, finalScore) {
+            const emoji = userRecommendation ? '👍' : '👎';
+            const verdict = userRecommendation ? 'Recommended' : 'Not Recommended';
+            const thumbs = userRecommendation ? '▲' : '▼';
+            
+            // ASCII Art Header
+            let text = `╔══════════════════════════════════════════════════════════════════╗\n`;
+            text += `║  ${emoji}  ${gameName.toUpperCase().padEnd(58)} ║\n`;
+            text += `║  ${verdict.toUpperCase().padStart(32)}${' '.repeat(27)}║\n`;
+            text += `╚══════════════════════════════════════════════════════════════════╝\n\n`;
+            
+            // Stats Box
+            text += `┌─────────────────────────────────────────────────────────────────┐\n`;
+            text += `│  ⏱️  Time Played: ${playTime.padEnd(20)}  📊 Score: ${(finalScore + '/100').padEnd(15)} │\n`;
+            text += `└─────────────────────────────────────────────────────────────────┘\n\n`;
+            
+            // Category Ratings with visual bars
+            const categories = [
+                { key: 'graphics', icon: '🎨', name: 'GRAPHICS' },
+                { key: 'gameplay', icon: '🎯', name: 'GAMEPLAY' },
+                { key: 'audio', icon: '🎵', name: 'AUDIO' },
+                { key: 'story', icon: '📖', name: 'STORY' },
+                { key: 'technical', icon: '⚙️', name: 'PC REQUIREMENTS' },
+                { key: 'price', icon: '💰', name: 'PRICE / VALUE' }
+            ];
+            
+            categories.forEach(cat => {
+                const score = scores[cat.key];
+                const filled = '█'.repeat(score);
+                const empty = '░'.repeat(10 - score);
+                const bar = `[${filled}${empty}]`;
+                
+                text += `${cat.icon} ${cat.name.padEnd(20)} ${bar} ${score.toString().padStart(2)}/10\n`;
+                text += `   └─> "${selectedOptions[cat.key] || 'Not rated'}"\n\n`;
+            });
+            
+            // Separator
+            text += `═══════════════════════════════════════════════════════════════════\n\n`;
+            
+            // Summary Section with styling
+            text += `【 📝 FINAL VERDICT 】\n`;
+            text += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            
+            // Dynamic summary based on score
+            let summaryText = '';
+            let quoteText = '';
+            
+            if (finalScore >= 85) {
+                summaryText = `★ ABSOLUTE MASTERPIECE ★\n\nThis game is a work of art that transcends the medium. Every aspect\nhas been crafted with obsessive attention to detail. A must-play\nexperience that will be remembered for years to come.`;
+                quoteText = `"${gameName} isn't just a game—it's a masterpiece that redefines\nwhat the medium is capable of achieving."`;
+            } else if (finalScore >= 70) {
+                summaryText = `◆ HIGHLY RECOMMENDED ◆\n\nAn excellent experience that delivers on almost every front. While\nnot perfect, the strengths far outweigh any minor flaws. A standout\ntitle in its genre that deserves your attention.`;
+                quoteText = `"A fantastic journey that will keep you engaged from start to finish.\nDon't miss out on this gem!"`;
+            } else if (finalScore >= 55) {
+                summaryText = `● WORTH PLAYING ●\n\nA solid entry that fans of the genre will appreciate. It may not\nreinvent the wheel, but it executes its ideas competently. Best\napproached with appropriate expectations.`;
+                quoteText = `"Good fun for the right audience. Know what you're getting into\nand you'll have a great time."`;
+            } else if (finalScore >= 40) {
+                summaryText = `○ AVERAGE EXPERIENCE ○\n\nA mixed bag with some redeeming qualities but notable shortcomings.\nWorth considering during a sale if the concept appeals to you,\nbut hard to recommend at full price.`;
+                quoteText = `"Has potential but falls short of greatness. Wait for a deep\ndiscount before taking the plunge."`;
+            } else if (finalScore >= 25) {
+                summaryText = `▽ BELOW AVERAGE ▽\n\nStruggles to justify its existence with significant issues across\nmultiple areas. Only the most dedicated fans should consider, and\neven then, with heavy reservations.`;
+                quoteText = `"A disappointing experience that fails to deliver on its promises.\nThere are better alternatives available."`;
+            } else {
+                summaryText = `▼ UNPLAYABLE / BROKEN ▼\n\nA catastrophic failure on almost every level. Technical issues,\npoor design choices, and lack of polish make this a game to avoid.\nSave your money and time for something better.`;
+                quoteText = `"One of the worst experiences in recent memory. Avoid at all costs\nunless you're a glutton for punishment."`;
+            }
+            
+            text += `${summaryText}\n\n`;
+            text += `💬 ${quoteText}\n\n`;
+            
+            // Recommendation box
+            text += `╔══════════════════════════════════════════════════════════════════╗\n`;
+            text += `║  ${thumbs}  OVERALL: ${verdict.toUpperCase().padEnd(52)} ║\n`;
+            text += `╚══════════════════════════════════════════════════════════════════╝\n\n`;
+            
+            // Footer
+            text += `───────────────────────────────────────────────────────────────────\n`;
+            text += `  🎮 Review generated by Steam Review Generator\n`;
+            text += `  🎮 https://github.com/whoishusni/steam-review-generator\n`;
+            text += `  📅 ${new Date().toLocaleDateString('id-ID')}\n`;
+            text += `───────────────────────────────────────────────────────────────────`;
+            
+            return text;
+        }
+        
+        function copyReview() {
+            const content = document.getElementById('reviewContent').textContent;
+            navigator.clipboard.writeText(content).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<span>✅</span> Copied!';
+                btn.style.background = 'rgba(164, 208, 7, 0.3)';
+                btn.style.borderColor = '#a4d007';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.style.background = '';
+                    btn.style.borderColor = '';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
